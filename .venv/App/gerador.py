@@ -3,7 +3,11 @@ import numpy as np
 import itertools
 import plotly.express as px
 import pandas as pd
-import random
+import multiprocessing
+
+# Medir tempo da função
+
+
 
 # Coordenadas dos pontos de atendimento
 locations = {
@@ -12,8 +16,9 @@ locations = {
     "PEDRO MOACIR FELIPPI": (-28.500555, -51.644722),
     "ISERTINO ROMEO CONTE": (-28.5025, -51.630000),
     "GELSON BORGES VIEIRA": (-28.499722, -51.65),
+    "ARACI THEREZINHA FABRIS DAROS": (-28.5008704, -51.7057256),
+    "PEDRO MOACIR FELIPPI": (-28.500555, -51.644722),
 
-    "Nova Prata - RS": (-28.779167, -51.611944)
 }
 
 # Lista de localidades
@@ -28,8 +33,10 @@ dist_matrix = distance_matrix(coords, coords)
 # Lista de permutações de rotas possíveis excluindo a primeira e última localidade (São Jorge e Nova Prata)
 permutations = itertools.permutations(range(1, len(locality_list) - 1))
 
-# Função para calcular a distância total de uma rota
+
+# Função para calcular a distância total de uma rota, essa função tem crescimento exponencial dependendo a quantidade de localidades, a mesma será interrompida se passar de 5 segundos.
 def total_distance(route):
+    
     distance = 0
     # Adiciona a distância de São Jorge até o primeiro ponto
     distance += dist_matrix[0, route[0]]
@@ -38,17 +45,20 @@ def total_distance(route):
         distance += dist_matrix[route[i], route[i + 1]]
     # Adiciona a distância do último ponto até Nova Prata
     distance += dist_matrix[route[-1], len(locality_list) - 1]
+
     return distance
 
 # Encontra a rota com a menor distância total
-optimal_route = min(permutations, key=total_distance)
 
+def rotaOtimizada():
+    optimal_route = min(permutations, key=total_distance)
+    print(optimal_route)
+    return optimal_route
+
+optimal_route = rotaOtimizada()
 # Monta a lista de localidades na ordem da rota otimizada
 optimized_localities = ["São Jorge - RS"] + [locality_list[i] for i in optimal_route] + ["Nova Prata - RS"]
 print(optimized_localities)
-
-
-#Caso der erro
 
 def nearest_neighbor(start_index, dist_matrix):
     n = len(dist_matrix)
@@ -97,6 +107,5 @@ df = pd.DataFrame({'Latitude': coords[best_route, 0],
                    'Localidade': [locality_list[i] for i in best_route]})
 print(df)
 
-# Criando um mapa interativo
-# fig = px.line_geo(df, lat='Latitude', lon='Longitude', scope="south america")
+# fig = px.line_geo(df, lat='Latitude', lon='Longitude', scope='south america', hover_name='Localidade')
 # fig.show()
