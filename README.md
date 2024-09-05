@@ -1,2 +1,9 @@
-# Otimizador de Rotas
- O algoritmo será criado em python, terá a interface mais simples possível, e gerará a rota com a menor distancia.
+# A otimizador-de-rotas Flet app
+
+An example of a minimal Flet app.
+
+To run the app:
+
+```
+flet run [app_directory]
+```
