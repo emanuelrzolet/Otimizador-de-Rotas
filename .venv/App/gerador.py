@@ -3,9 +3,7 @@ import numpy as np
 import itertools
 import plotly.express as px
 import pandas as pd
-import multiprocessing
-import concurrent.futures
-import time
+import threading
 
 
 
@@ -17,6 +15,11 @@ locations = {
     "PEDRO MOACIR FELIPPI": (-28.500555, -51.644722),
     "ISERTINO ROMEO CONTE": (-28.5025, -51.630000),
     "GELSON BORGES VIEIRA": (-28.499722, -51.65),
+    "PEDRINHO POLLI": (-28.493611, -51.6625),
+    "EDEGAR POLLI": (-28.498055, -51.665555),
+    "ADAIR JOSE PONTEL": (-28.51, -51.654444),
+    "WALTER VIAPIANA": (-28.506944, -51.65),
+    "ULISSES VIAPIANA": (-28.5001528, -51.7051189)
     
     
 
@@ -44,7 +47,7 @@ def total_distance(route):
     # Adiciona a distância entre os pontos intermediários
     for i in range(len(route) - 1):
         distance += dist_matrix[route[i], route[i + 1]]
-    # Adiciona a distância do último ponto até Nova Prata
+    # Adiciona a distância do último ponto até o destino
     distance += dist_matrix[route[-1], len(locality_list) - 1]
 
     return distance
@@ -55,61 +58,81 @@ def rotaOtimizada():
     optimal_route = min(permutations, key=total_distance)
     return optimal_route
 
-optimal_route = rotaOtimizada()
-# Monta a lista de localidades na ordem da rota otimizada
-optimized_localities = [locality_list[0]] + [locality_list[i] for i in optimal_route] + [locality_list[-1]]
-# Sáida da lista dos dados
-print(optimized_localities)
+# Função para controlar o tempo limite de execução
+def rotaOtimizadaComTimeout(timeout):
+    resultado = [None]  #Lista mutável para capturar o retorno da função
 
+    def funcaoComTimeout():
+        resultado[0] = rotaOtimizada()
 
-# Caso Falhar, será executado o proximo bloco
+    # Criar thread para executar a função
+    thread = threading.Thread(target=funcaoComTimeout)
+    thread.start()
 
-def nearest_neighbor(start_index, dist_matrix):
-    n = len(dist_matrix)
-    visited = [False] * n
-    route = [start_index]
-    visited[start_index] = True
+    # Aguarda o término da thread ou o timeout
+    thread.join(timeout)
 
-    for _ in range(n - 1):
-        last = route[-1]
-        next_city = np.argmin([dist_matrix[last][j] if not visited[j] else float('inf') for j in range(n)])
-        route.append(next_city)
-        visited[next_city] = True
+    # Verificar se a função terminou a execução no tempo
+    if thread.is_alive():
+        # Caso o tempo tenha sido excedido, retornaremos outro algoritmo
+        print("Devido ao grande número de combinações, a rota será gerada usando o algoritmo de Nearest_neighbor")
+        def nearest_neighbor(start_index, dist_matrix):
+            n = len(dist_matrix)
+            visited = [False] * n
+            route = [start_index]
+            visited[start_index] = True
 
-    return route
+            for _ in range(n - 1):
+                last = route[-1]
+                next_city = np.argmin([dist_matrix[last][j] if not visited[j] else float('inf') for j in range(n)])
+                route.append(next_city)
+                visited[next_city] = True
 
-# Inicia em São Jorge - RS (índice 0) e encontra a rota otimizada
-route_indices = nearest_neighbor(0, dist_matrix)
+            return route
 
-# Converte os índices da rota para nomes das localidades
-optimized_localities = [locality_list[i] for i in route_indices]
-print(optimized_localities)
-# TESTE
+        # Inicia em São Jorge - RS (índice 0) e encontra a rota otimizada
+        route_indices = nearest_neighbor(0, dist_matrix)
 
-def local_search(route, dist_matrix):
-    improved = True
-    while improved:
-        improved = False
-        for i in range(1, len(route) - 1):
-            for j in range(i + 1, len(route) - 1):
-                new_route = route.copy()
-                new_route[i], new_route[j] = new_route[j], new_route[i]
-                if total_distance(new_route) < total_distance(route):
-                    route = new_route
-                    improved = True
-    return route
+        # Converte os índices da rota para nomes das localidades
+        optimized_localities = [locality_list[i] for i in route_indices]
+        print(optimized_localities)
+        # TESTE
 
-# Obter uma solução inicial com o vizinho mais próximo
-initial_route = nearest_neighbor(0, dist_matrix)
+        def local_search(route, dist_matrix):
+            improved = True
+            while improved:
+                improved = False
+                for i in range(1, len(route) - 1):
+                    for j in range(i + 1, len(route) - 1):
+                        new_route = route.copy()
+                        new_route[i], new_route[j] = new_route[j], new_route[i]
+                        if total_distance(new_route) < total_distance(route):
+                            route = new_route
+                            improved = True
+            return route
 
-# Aplicar a busca local
-best_route = local_search(initial_route, dist_matrix)
+        # Obter uma solução inicial com o vizinho mais próximo
+        initial_route = nearest_neighbor(0, dist_matrix)
 
-# Criando um DataFrame com as coordenadas da rota otimizada
-df = pd.DataFrame({'Latitude': coords[best_route, 0],
-                   'Longitude': coords[best_route, 1],
-                   'Localidade': [locality_list[i] for i in best_route]})
-print(df)
+        # Aplicar a busca local
+        best_route = local_search(initial_route, dist_matrix)
 
-# fig = px.line_geo(df, lat='Latitude', lon='Longitude', scope='south america', hover_name='Localidade')
-# fig.show()
+        # Criando um DataFrame com as coordenadas da rota otimizada
+        df = pd.DataFrame({'Latitude': coords[best_route, 0],
+                        'Longitude': coords[best_route, 1],
+                        'Localidade': [locality_list[i] for i in best_route]})
+        print(df)
+
+    else:
+        return resultado[0]  # Se terminou no tempo, retornamos o resultado
+    optimal_route = rotaOtimizadaComTimeout(80)
+    # Monta a lista de localidades na ordem da rota otimizada
+    optimized_localities = [locality_list[0]] + [locality_list[i] for i in optimal_route] + [locality_list[-1]]
+    print(optimized_localities)
+    
+    df = pd.DataFrame({'Latitude': [coords[i] for i in best_route],
+                        'Localidade': [locality_list[i] for i in best_route]})
+    print(df)
+
+    # Sáida da lista dos dados
+
