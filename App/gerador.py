@@ -2,6 +2,7 @@ from scipy.spatial import distance_matrix
 import numpy as np
 import itertools
 import threading
+import json
 
 # Coordenadas dos pontos de atendimento
 locations = {
@@ -22,6 +23,8 @@ locations = {
     "Nova Prata - RS": (-28.779167, -51.611944)
 
 }
+with open('locations.json', 'w') as f:
+    json.dump(locations, f)
 
 # Lista de localidades
 locality_list = list(locations.keys())
