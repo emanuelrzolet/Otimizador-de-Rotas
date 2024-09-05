@@ -4,8 +4,9 @@ import itertools
 import plotly.express as px
 import pandas as pd
 import multiprocessing
+import concurrent.futures
+import time
 
-# Medir tempo da função
 
 
 
@@ -16,8 +17,8 @@ locations = {
     "PEDRO MOACIR FELIPPI": (-28.500555, -51.644722),
     "ISERTINO ROMEO CONTE": (-28.5025, -51.630000),
     "GELSON BORGES VIEIRA": (-28.499722, -51.65),
-    "ARACI THEREZINHA FABRIS DAROS": (-28.5008704, -51.7057256),
-    "PEDRO MOACIR FELIPPI": (-28.500555, -51.644722),
+    
+    
 
 }
 
@@ -34,7 +35,7 @@ dist_matrix = distance_matrix(coords, coords)
 permutations = itertools.permutations(range(1, len(locality_list) - 1))
 
 
-# Função para calcular a distância total de uma rota, essa função tem crescimento exponencial dependendo a quantidade de localidades, a mesma será interrompida se passar de 5 segundos.
+# Função para calcular a distância total de uma rota.
 def total_distance(route):
     
     distance = 0
@@ -48,17 +49,20 @@ def total_distance(route):
 
     return distance
 
-# Encontra a rota com a menor distância total
+# Encontra a rota com a menor distância total, essa função tem crescimento exponencial dependendo a quantidade de localidades, a mesma será interrompida se passar de 5 segundos
 
 def rotaOtimizada():
     optimal_route = min(permutations, key=total_distance)
-    print(optimal_route)
     return optimal_route
 
 optimal_route = rotaOtimizada()
 # Monta a lista de localidades na ordem da rota otimizada
-optimized_localities = ["São Jorge - RS"] + [locality_list[i] for i in optimal_route] + ["Nova Prata - RS"]
+optimized_localities = [locality_list[0]] + [locality_list[i] for i in optimal_route] + [locality_list[-1]]
+# Sáida da lista dos dados
 print(optimized_localities)
+
+
+# Caso Falhar, será executado o proximo bloco
 
 def nearest_neighbor(start_index, dist_matrix):
     n = len(dist_matrix)
