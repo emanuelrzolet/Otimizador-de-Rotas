@@ -1,6 +1,9 @@
 from scipy.spatial import distance_matrix
 import numpy as np
 import itertools
+import plotly.express as px
+import pandas as pd
+import random
 
 # Coordenadas dos pontos de atendimento
 locations = {
@@ -9,15 +12,7 @@ locations = {
     "PEDRO MOACIR FELIPPI": (-28.500555, -51.644722),
     "ISERTINO ROMEO CONTE": (-28.5025, -51.630000),
     "GELSON BORGES VIEIRA": (-28.499722, -51.65),
-    "JOSE DOMINGOS SIMIONI": (-28.490833, -51.659722),
-    "ANTONIO SIMIONI": (-28.489999, -51.658888),
-    "ADEMIR BASSOLI": (-28.481944, -51.667222),
-    "DIONISIO BRESOLIN": (-28.482500, -51.662777),
-    "PEDRINHO POLLI": (-28.493611, -51.6625),
-    "EDEGAR POLLI": (-28.498055, -51.665555),
-    "ADAIR JOSE PONTEL": (-28.51, -51.654444),
-    "WALTER VIAPIANA": (-28.506944, -51.65),
-    "ULISSES VIAPIANA": (-28.5001528, -51.7051189),
+
     "Nova Prata - RS": (-28.779167, -51.611944)
 }
 
@@ -53,7 +48,6 @@ optimized_localities = ["São Jorge - RS"] + [locality_list[i] for i in optimal_
 print(optimized_localities)
 
 
-
 #Caso der erro
 
 def nearest_neighbor(start_index, dist_matrix):
@@ -76,3 +70,33 @@ route_indices = nearest_neighbor(0, dist_matrix)
 # Converte os índices da rota para nomes das localidades
 optimized_localities = [locality_list[i] for i in route_indices]
 print(optimized_localities)
+# TESTE
+
+def local_search(route, dist_matrix):
+    improved = True
+    while improved:
+        improved = False
+        for i in range(1, len(route) - 1):
+            for j in range(i + 1, len(route) - 1):
+                new_route = route.copy()
+                new_route[i], new_route[j] = new_route[j], new_route[i]
+                if total_distance(new_route) < total_distance(route):
+                    route = new_route
+                    improved = True
+    return route
+
+# Obter uma solução inicial com o vizinho mais próximo
+initial_route = nearest_neighbor(0, dist_matrix)
+
+# Aplicar a busca local
+best_route = local_search(initial_route, dist_matrix)
+
+# Criando um DataFrame com as coordenadas da rota otimizada
+df = pd.DataFrame({'Latitude': coords[best_route, 0],
+                   'Longitude': coords[best_route, 1],
+                   'Localidade': [locality_list[i] for i in best_route]})
+print(df)
+
+# Criando um mapa interativo
+# fig = px.line_geo(df, lat='Latitude', lon='Longitude', scope="south america")
+# fig.show()
