@@ -1,12 +1,8 @@
 from scipy.spatial import distance_matrix
 import numpy as np
 import itertools
-import plotly.express as px
 import pandas as pd
 import threading
-
-
-
 
 # Coordenadas dos pontos de atendimento
 locations = {
@@ -19,10 +15,7 @@ locations = {
     "EDEGAR POLLI": (-28.498055, -51.665555),
     "ADAIR JOSE PONTEL": (-28.51, -51.654444),
     "WALTER VIAPIANA": (-28.506944, -51.65),
-    "ULISSES VIAPIANA": (-28.5001528, -51.7051189)
-    
-    
-
+    "ULISSES VIAPIANA": (-28.5001528, -51.7051189),
 }
 
 # Lista de localidades
@@ -40,7 +33,6 @@ permutations = itertools.permutations(range(1, len(locality_list) - 1))
 
 # Função para calcular a distância total de uma rota.
 def total_distance(route):
-    
     distance = 0
     # Adiciona a distância de São Jorge até o primeiro ponto
     distance += dist_matrix[0, route[0]]
@@ -49,18 +41,11 @@ def total_distance(route):
         distance += dist_matrix[route[i], route[i + 1]]
     # Adiciona a distância do último ponto até o destino
     distance += dist_matrix[route[-1], len(locality_list) - 1]
-
     return distance
-
-# Encontra a rota com a menor distância total, essa função tem crescimento exponencial dependendo a quantidade de localidades, a mesma será interrompida se passar de 5 segundos
-
-def rotaOtimizada():
-    optimal_route = min(permutations, key=total_distance)
-    return optimal_route
 
 # Função para controlar o tempo limite de execução
 def rotaOtimizadaComTimeout(timeout):
-    resultado = [None]  #Lista mutável para capturar o retorno da função
+    resultado = [None]  # Lista mutável para capturar o retorno da função
 
     def funcaoComTimeout():
         resultado[0] = rotaOtimizada()
@@ -74,8 +59,8 @@ def rotaOtimizadaComTimeout(timeout):
 
     # Verificar se a função terminou a execução no tempo
     if thread.is_alive():
-        # Caso o tempo tenha sido excedido, retornaremos outro algoritmo
         print("Devido ao grande número de combinações, a rota será gerada usando o algoritmo de Nearest_neighbor")
+        
         def nearest_neighbor(start_index, dist_matrix):
             n = len(dist_matrix)
             visited = [False] * n
@@ -96,8 +81,8 @@ def rotaOtimizadaComTimeout(timeout):
         # Converte os índices da rota para nomes das localidades
         optimized_localities = [locality_list[i] for i in route_indices]
         print(optimized_localities)
-        # TESTE
 
+        # TESTE de busca local
         def local_search(route, dist_matrix):
             improved = True
             while improved:
@@ -118,21 +103,25 @@ def rotaOtimizadaComTimeout(timeout):
         best_route = local_search(initial_route, dist_matrix)
 
         # Criando um DataFrame com as coordenadas da rota otimizada
-        df = pd.DataFrame({'Latitude': coords[best_route, 0],
-                        'Longitude': coords[best_route, 1],
-                        'Localidade': [locality_list[i] for i in best_route]})
+        df = pd.DataFrame({
+            'Latitude': coords[best_route, 0],
+            'Longitude': coords[best_route, 1],
+            'Localidade': [locality_list[i] for i in best_route]
+        })
         print(df)
 
     else:
         return resultado[0]  # Se terminou no tempo, retornamos o resultado
-    optimal_route = rotaOtimizadaComTimeout(80)
+
+# Função para encontrar a rota otimizada
+def rotaOtimizada():
+    optimal_route = min(permutations, key=total_distance)
+    return optimal_route
+
+# Executar a função com limite de tempo
+optimal_route = rotaOtimizadaComTimeout(5)
+
+if optimal_route:
     # Monta a lista de localidades na ordem da rota otimizada
     optimized_localities = [locality_list[0]] + [locality_list[i] for i in optimal_route] + [locality_list[-1]]
     print(optimized_localities)
-    
-    df = pd.DataFrame({'Latitude': [coords[i] for i in best_route],
-                        'Localidade': [locality_list[i] for i in best_route]})
-    print(df)
-
-    # Sáida da lista dos dados
-
