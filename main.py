@@ -1,5 +1,5 @@
 import flet as ft
-from functions import addLocation
+from functions import addLocation, showLocation
 
 def main(page: ft.Page):
     page.add(ft.SafeArea(ft.Text("_-Gerador de Rotas Aprimoradas-_")))
