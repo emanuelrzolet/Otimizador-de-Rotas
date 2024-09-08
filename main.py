@@ -5,7 +5,7 @@ def main(page: ft.Page):
     page.add(ft.SafeArea(ft.Text("_-Gerador de Rotas Aprimoradas-_")))
     page.add(ft.SafeArea(ft.Text("Insira o ponto de inicio e fim da rota e seus pontos de parada.")))
     page.update()
-    page.add(ft.ElevatedButton(text="Adicionar Coordenada", on_click={}))
+    page.add(ft.ElevatedButton(text="Adicionar Coordenada", on_click=addLocation.addLocation()))
     page.update()
     
     
