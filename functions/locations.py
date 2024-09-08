@@ -15,3 +15,12 @@ def addLocation(name, coord):
     # Exibindo as chaves e valores
     for k, v in dados.items():
         print(k, v)
+
+def showLocations():
+    import json
+
+    with open('locations.json', 'r') as f:
+        dados = json.load(f)
+    
+    for k, v in enumerate(dados):
+        print(k,v)
