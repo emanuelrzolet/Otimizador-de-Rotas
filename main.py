@@ -1,9 +1,10 @@
+from turtle import update
 import flet as ft
-from functions import locations, showLocation
+from numpy import integer
+from functions import locations
 
 def main(page: ft.Page):
     page.add(ft.SafeArea(ft.Text("_-Gerador de Rotas Aprimoradas-_")))
-    page.add(ft.SafeArea(ft.Text("Insira o ponto de inicio e fim da rota e seus pontos de parada.")))
     page.update()
     # Adicionar coordenada
     nameField = ft.TextField(label="Nome", border="underline", hint_text="Digite o nome do ponto de parada: ")
@@ -14,15 +15,32 @@ def main(page: ft.Page):
     
     
     # Mostrar coordenada
-    def checkbox_changed(e):
-        output_text.value = (
-            f"Adicionar :  {addCheck.value}."
-        )
+    
+    def checkbox_changed(e, index=i):
+        location[index]["enabled"] = e.control.value
+        page.update()  # Atualiza a página para refletir a mudança
+    items = locations.showLocations()
+    for i, location in enumerate(items):
+        # Função chamada quando o checkbox de um item é alterado
+            
+        page.add(
+            ft.Row(
+                controls=[
+                    ft.Checkbox(
+                        label=location[i],
+                        value=1,
+                        on_change=lambda e, idx=i: checkbox_changed(e, index=idx),
+                    ),
+                    ft.IconButton(
+                        icon=ft.icons.DELETE,
+                        on_click=lambda e, idx=i: locations.deleteLocation(e, index=idx)
+                    ),
+                ]
+            ))
+                
         page.update()
+                
 
-    output_text = ft.Text()
-    addCheck = ft.Checkbox(label="NOME CLIENTE", value=True, on_change=checkbox_changed)
-    page.add(addCheck, output_text)
 
 
 ft.app(main)

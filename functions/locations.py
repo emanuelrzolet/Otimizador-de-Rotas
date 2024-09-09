@@ -21,6 +21,15 @@ def showLocations():
 
     with open('locations.json', 'r') as f:
         dados = json.load(f)
+        return dados
     
-    for k, v in enumerate(dados):
-        print(k,v)
+def deleteLocation(index):
+    import json
+
+    with open('locations.json', 'r+') as f:
+        dados = json.load(f)
+    
+    del dados[index]  # Remove o item da lista
+    json.dump(dados, f, indent=4) #Salva os itens
+
+    
