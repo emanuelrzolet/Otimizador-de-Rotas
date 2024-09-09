@@ -14,32 +14,35 @@ def main(page: ft.Page):
     page.update()
     
     
-    # Mostrar coordenada
     
-    def checkbox_changed(e, index=i):
+    # Mostrar coordenada
+
+    def checkbox_changed(e, index):
         location[index]["enabled"] = e.control.value
         page.update()  # Atualiza a página para refletir a mudança
+
     items = locations.showLocations()
     for i, location in enumerate(items):
         # Função chamada quando o checkbox de um item é alterado
-            
+        
         page.add(
             ft.Row(
                 controls=[
                     ft.Checkbox(
-                        label=location[i],
+                        label=location,
                         value=1,
-                        on_change=lambda e, idx=i: checkbox_changed(e, index=idx),
+                        on_change=lambda e, idx=i: checkbox_changed(e, index=idx),  # Aqui o valor de i é capturado
                     ),
                     ft.IconButton(
                         icon=ft.icons.DELETE,
-                        on_click=lambda e, idx=i: locations.deleteLocation(e, index=idx)
+                        on_click=lambda e, idx=i: locations.deleteLocation(e, index=idx)  # Aqui o valor de i é capturado
                     ),
                 ]
-            ))
-                
-        page.update()
-                
+            )
+        )
+        
+    page.update()
+
 
 
 

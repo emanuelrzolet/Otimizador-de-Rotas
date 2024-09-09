@@ -1,3 +1,4 @@
+import flet as ft
 def addLocation(name, coord):
     import json
 
@@ -15,6 +16,8 @@ def addLocation(name, coord):
     # Exibindo as chaves e valores
     for k, v in dados.items():
         print(k, v)
+    
+    
 
 def showLocations():
     import json
