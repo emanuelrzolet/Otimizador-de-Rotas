@@ -10,7 +10,7 @@ def main(page: ft.Page):
     nameField = ft.TextField(label="Nome", border="underline", hint_text="Digite o nome do ponto de parada: ")
     coordField = ft.TextField(label="Coordenada", border="none", hint_text="Latitude, Longitude: ")
     page.add(nameField, coordField)
-    page.add(ft.ElevatedButton(text="Adicionar Coordenada", on_click=lambda e: locations.addLocation(nameField.value, coordField.value)))
+    page.add(ft.ElevatedButton(text="Adicionar Coordenada", on_click=lambda e: locations.addLocation(nameField.value, coordField.value, page)))
     page.update()
     
     

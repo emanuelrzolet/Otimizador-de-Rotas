@@ -1,6 +1,5 @@
-import flet as ft
-def addLocation(name, coord):
-    import json
+import json
+def addLocation(name, coord,page):
 
     with open('locations.json', 'r+') as f:
         dados = json.load(f)
@@ -16,20 +15,19 @@ def addLocation(name, coord):
     # Exibindo as chaves e valores
     for k, v in dados.items():
         print(k, v)
+    page.update()
     
     
 
 def showLocations():
-    import json
 
     with open('locations.json', 'r') as f:
         dados = json.load(f)
         return dados
     
 def deleteLocation(index):
-    import json
 
-    with open('locations.json', 'r+') as f:
+    with open('locations.json', 'w') as f:
         dados = json.load(f)
     
     del dados[index]  # Remove o item da lista
