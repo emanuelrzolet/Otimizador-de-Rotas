@@ -3,18 +3,15 @@ import numpy as np
 import itertools
 import threading
 import json
+
 def generate(locations):
-    # Variavel que servirá para capturar o resultado da lista Otimizada
-    otimizadedList =list()
-    
-    # Coordenadas dos pontos de atendimento
+    otimizadedList = []
 
     # Lista de localidades
     locality_list = list(locations.keys())
 
-    # Matriz de coordenadas com validação
+    # Função para verificar e converter coordenadas
     def parse_coordinates(value):
-        # Verifica se as coordenadas estão no formato string, e se sim, converte-as em uma lista de floats
         if isinstance(value, str):
             try:
                 return [float(coord.strip()) for coord in value.split(",")]
@@ -23,85 +20,76 @@ def generate(locations):
                 return None
         return value
 
+    # Criar a matriz de coordenadas filtrando coordenadas válidas
     coords = np.array([parse_coordinates(value) for value in locations.values() if parse_coordinates(value) is not None])
+    if len(coords) < len(locations):
+        print("Algumas localidades têm coordenadas inválidas e foram ignoradas.")
 
     # Matriz de distâncias
     dist_matrix = distance_matrix(coords, coords)
 
-    # Lista de permutações de rotas possíveis excluindo a primeira e última localidade (São Jorge e Nova Prata)
+    # Permutações de rotas possíveis (excluindo primeira e última localidade)
     permutations = itertools.permutations(range(1, len(locality_list) - 1))
 
-    # Função para calcular a distância total de uma rota.
+    # Função para calcular a distância total de uma rota
     def total_distance(route):
         distance = 0
-        # Adiciona a distância do ponto de inicio até o primeiro ponto
         distance += dist_matrix[0, route[0]]
-        # Adiciona a distância entre os pontos intermediários
         for i in range(len(route) - 1):
             distance += dist_matrix[route[i], route[i + 1]]
-        # Adiciona a distância do último ponto até o destino
         distance += dist_matrix[route[-1], len(locality_list) - 1]
         return distance
 
-    # Função para controlar o tempo limite de execução
-    def rotaOtimizadaComTimeout(timeout):
-        resultado = [None]  # Lista mutável para capturar o retorno da função
+    # Função nearest_neighbor para rotas grandes
+    def nearest_neighbor(start_index, dist_matrix):
+        n = len(dist_matrix)
+        visited = [False] * n
+        route = [start_index]
+        visited[start_index] = True
 
-        def funcaoComTimeout():
-            resultado[0] = rotaOtimizada()
+        for _ in range(n - 1):
+            last = route[-1]
+            next_city = np.argmin([dist_matrix[last][j] if not visited[j] else float('inf') for j in range(n)])
+            route.append(next_city)
+            visited[next_city] = True
 
-        # Criar thread para executar a função
-        thread = threading.Thread(target=funcaoComTimeout)
-        thread.start()
-
-        # Aguarda o término da thread ou o timeout
-        thread.join(timeout)
-
-        # Verificar se a função terminou a execução no tempo
-        if thread.is_alive():
-            print("Devido ao grande número de combinações, a rota será gerada usando o algoritmo de Nearest_neighbor")
-            
-            def nearest_neighbor(start_index, dist_matrix):
-                n = len(dist_matrix)
-                visited = [False] * n
-                route = [start_index]
-                visited[start_index] = True
-
-                for _ in range(n - 1):
-                    last = route[-1]
-                    next_city = np.argmin([dist_matrix[last][j] if not visited[j] else float('inf') for j in range(n)])
-                    route.append(next_city)
-                    visited[next_city] = True
-
-                return route
-
-            # Inicia em São Jorge - RS (índice 0) e encontra a rota otimizada
-            route_indices = nearest_neighbor(0, dist_matrix)
-
-            # Converte os índices da rota para nomes das localidades
-            optimized_localities = [locality_list[i] for i in route_indices]
-
-            # Impressão formatada de nome e coordenadas
-            for i in route_indices:
-                otimizadedList.append(f"{locality_list[i]}, https://www.google.com/maps/search/?api=1&query={locations[locality_list[i]]}")
-                return otimizadedList
-
-        else:
-            return resultado[0]  # Se terminou no tempo, retornamos o resultado
+        return route
 
     # Função para encontrar a rota otimizada
     def rotaOtimizada():
         optimal_route = min(permutations, key=total_distance)
         return optimal_route
 
-    # Executar a função com limite de tempo
+    # Função com timeout para controle
+    def rotaOtimizadaComTimeout(timeout):
+        resultado = [None]
+
+        def funcaoComTimeout():
+            resultado[0] = rotaOtimizada()
+
+        thread = threading.Thread(target=funcaoComTimeout)
+        thread.start()
+        thread.join(timeout)
+
+        if thread.is_alive():
+            print("Devido ao grande número de combinações, a rota será gerada usando o algoritmo de Nearest_neighbor")
+            route_indices = nearest_neighbor(0, dist_matrix)
+            return route_indices
+        else:
+            return resultado[0]
+
+    # Executar função com timeout
     optimal_route = rotaOtimizadaComTimeout(5)
 
-    # Verificar se a rota otimizada foi encontrada dentro do tempo e imprimir
     if optimal_route:
-        optimized_localities = [locality_list[0]] + [locality_list[i] for i in optimal_route] + [locality_list[-1]]
-        
-        # Impressão formatada de nome e coordenadas
-        for i in optimal_route:
-            otimizadedList.append(f"{locality_list[i]}, https://www.google.com/maps/search/?api=1&query={locations[locality_list[i]]}")
-        return otimizadedList
+        # Gerar lista otimizadedList com o nome das localidades e links do Google Maps
+        if isinstance(optimal_route, tuple):  # Se usou rotaOtimizada
+            optimized_localities = [locality_list[0]] + [locality_list[i] for i in optimal_route] + [locality_list[-1]]
+        else:  # Se usou nearest_neighbor
+            optimized_localities = [locality_list[i] for i in optimal_route]
+
+        for i in range(len(optimized_localities)):
+            localidade = optimized_localities[i]
+            otimizadedList.append(f"{localidade}, https://www.google.com/maps/search/?api=1&query={locations[localidade]}")
+
+    return otimizadedList
