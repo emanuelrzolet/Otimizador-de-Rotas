@@ -1,6 +1,6 @@
 import json
-def addLocation(name, coord,page):
 
+def addLocation(name, coord, page):
     with open('locations.json', 'r+') as f:
         dados = json.load(f)
         # Passagem dos dados para dentro do objeto
@@ -11,26 +11,25 @@ def addLocation(name, coord,page):
         
         # Escrevendo os dados atualizados
         json.dump(dados, f, indent=4)
-        
-    # Exibindo as chaves e valores
-    for k, v in dados.items():
-        print(k, v)
+    
     page.update()
     
-    
-
 def showLocations():
-
     with open('locations.json', 'r') as f:
         dados = json.load(f)
         return dados
     
-def deleteLocation(index):
-
-    with open('locations.json', 'w') as f:
+def deleteLocation(name, page):
+    with open('locations.json', 'r+') as f:
         dados = json.load(f)
+        
+        if name in dados:
+            del dados[name]  # Remove o item do dicionário
+            
+            f.seek(0)  # Move o cursor para o início do arquivo
+            f.truncate()  # Limpa o conteúdo do arquivo
+            
+            # Salva os itens restantes
+            json.dump(dados, f, indent=4)
     
-    del dados[index]  # Remove o item da lista
-    json.dump(dados, f, indent=4) #Salva os itens
-
-    
+    page.update()
