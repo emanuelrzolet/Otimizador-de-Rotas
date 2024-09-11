@@ -4,6 +4,7 @@ import itertools
 import threading
 import json
 def generate(locations):
+    otimizadedList =list()
     
     # Coordenadas dos pontos de atendimento
 
@@ -71,7 +72,8 @@ def generate(locations):
 
             # Impressão formatada de nome e coordenadas
             for i in route_indices:
-                return(f"nome: {locality_list[i]}, https://www.google.com/maps/search/?api=1&query={locations[locality_list[i]]}")
+                otimizadedList.append(f"{locality_list[i]}, https://www.google.com/maps/search/?api=1&query={locations[locality_list[i]]}")
+                return otimizadedList
 
         else:
             return resultado[0]  # Se terminou no tempo, retornamos o resultado
@@ -90,4 +92,5 @@ def generate(locations):
         
         # Impressão formatada de nome e coordenadas
         for i in optimal_route:
-            return(f"nome: {locality_list[i]}, https://www.google.com/maps/search/?api=1&query={locations[locality_list[i]]}")
+            otimizadedList.append(f"{locality_list[i]}, https://www.google.com/maps/search/?api=1&query={locations[locality_list[i]]}")
+        return otimizadedList

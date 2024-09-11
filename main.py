@@ -4,6 +4,7 @@ import json
 
 
 def main(page: ft.Page):
+    page.scroll = ft.ScrollMode.ALWAYS  # Permite rolagem sempre
     page.add(ft.SafeArea(ft.Text("_-Gerador de Rotas Aprimoradas-_")))
 
     selected_items = {}  # Armazena o estado dos checkboxes (True/False) com base no nome
@@ -49,7 +50,8 @@ def main(page: ft.Page):
     def CaptureLocations(e):
         selected_coords = {name: coord for name, coord in locations.showLocations().items() if selected_items.get(name)}
         gerador.generate(selected_coords)
-        page.add(ft.Text(gerador.generate(selected_coords)))  # Adiciona o resultado à página
+        for c in gerador.generate(selected_coords):
+            page.add(ft.Text(c))  # Adiciona o resultado à página
         page.update()
 
     # Adicionar coordenada
