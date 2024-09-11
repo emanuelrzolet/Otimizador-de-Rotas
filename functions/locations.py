@@ -4,6 +4,7 @@ def addLocation(name, coord, page, reload_locations):
     with open('locations.json', 'r+') as f:
         dados = json.load(f)
         # Passagem dos dados para dentro do objeto
+        coord.replace()
         dados[name] = coord
         
         f.seek(0)  # Move o cursor para o início do arquivo

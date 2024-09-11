@@ -4,6 +4,7 @@ import itertools
 import threading
 import json
 def generate(locations):
+    # Variavel que servirá para capturar o resultado da lista Otimizada
     otimizadedList =list()
     
     # Coordenadas dos pontos de atendimento
@@ -11,8 +12,18 @@ def generate(locations):
     # Lista de localidades
     locality_list = list(locations.keys())
 
-    # Matriz de coordenadas
-    coords = np.array(list(locations.values()))
+    # Matriz de coordenadas com validação
+    def parse_coordinates(value):
+        # Verifica se as coordenadas estão no formato string, e se sim, converte-as em uma lista de floats
+        if isinstance(value, str):
+            try:
+                return [float(coord.strip()) for coord in value.split(",")]
+            except ValueError:
+                print(f"Erro ao converter coordenadas: {value}")
+                return None
+        return value
+
+    coords = np.array([parse_coordinates(value) for value in locations.values() if parse_coordinates(value) is not None])
 
     # Matriz de distâncias
     dist_matrix = distance_matrix(coords, coords)
@@ -23,7 +34,7 @@ def generate(locations):
     # Função para calcular a distância total de uma rota.
     def total_distance(route):
         distance = 0
-        # Adiciona a distância de São Jorge até o primeiro ponto
+        # Adiciona a distância do ponto de inicio até o primeiro ponto
         distance += dist_matrix[0, route[0]]
         # Adiciona a distância entre os pontos intermediários
         for i in range(len(route) - 1):
