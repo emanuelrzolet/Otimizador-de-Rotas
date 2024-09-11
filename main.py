@@ -48,10 +48,8 @@ def main(page: ft.Page):
     # Função para capturar os itens marcados e exibir como JSON
     def CaptureLocations(e):
         selected_coords = {name: coord for name, coord in locations.showLocations().items() if selected_items.get(name)}
-        enableCoords = json.dumps(selected_coords, indent=4)
-        selected_coords = json.loads(enableCoords)
-        gerador.generate(enableCoords)
-        page.add(ft.Text(enableCoords))  # Adiciona o resultado à página
+        gerador.generate(selected_coords)
+        page.add(ft.Text(gerador.generate(selected_coords)))  # Adiciona o resultado à página
         page.update()
 
     # Adicionar coordenada

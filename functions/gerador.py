@@ -6,9 +6,6 @@ import json
 def generate(locations):
     
     # Coordenadas dos pontos de atendimento
-    # with open('selectedLocations.json', 'w') as f:
-    #     json.dump(locations, f)
-    print(locations)
 
     # Lista de localidades
     locality_list = list(locations.keys())
@@ -74,7 +71,7 @@ def generate(locations):
 
             # Impressão formatada de nome e coordenadas
             for i in route_indices:
-                print(f"nome: {locality_list[i]}, https://www.google.com/maps/search/?api=1&query={locations[locality_list[i]]}")
+                return(f"nome: {locality_list[i]}, https://www.google.com/maps/search/?api=1&query={locations[locality_list[i]]}")
 
         else:
             return resultado[0]  # Se terminou no tempo, retornamos o resultado
@@ -93,4 +90,4 @@ def generate(locations):
         
         # Impressão formatada de nome e coordenadas
         for i in optimal_route:
-            print(f"nome: {locality_list[i]}, https://www.google.com/maps/search/?api=1&query={locations[locality_list[i]]}")
+            return(f"nome: {locality_list[i]}, https://www.google.com/maps/search/?api=1&query={locations[locality_list[i]]}")
