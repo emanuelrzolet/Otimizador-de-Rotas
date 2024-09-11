@@ -1,6 +1,6 @@
 import json
 
-def addLocation(name, coord, page):
+def addLocation(name, coord, page, reload_locations):
     with open('locations.json', 'r+') as f:
         dados = json.load(f)
         # Passagem dos dados para dentro do objeto
@@ -12,14 +12,15 @@ def addLocation(name, coord, page):
         # Escrevendo os dados atualizados
         json.dump(dados, f, indent=4)
     
-    page.update()
-    
+    # Atualiza a lista de coordenadas
+    reload_locations()
+
 def showLocations():
     with open('locations.json', 'r') as f:
         dados = json.load(f)
         return dados
     
-def deleteLocation(name, page):
+def deleteLocation(name, page, reload_locations):
     with open('locations.json', 'r+') as f:
         dados = json.load(f)
         
@@ -32,4 +33,5 @@ def deleteLocation(name, page):
             # Salva os itens restantes
             json.dump(dados, f, indent=4)
     
-    page.update()
+    # Atualiza a lista de coordenadas
+    reload_locations()
