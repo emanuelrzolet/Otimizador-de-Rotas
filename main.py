@@ -54,7 +54,8 @@ def main(page: ft.Page):
         
         for name, coord in selected_coords.items():
             
-            maps_url = f"https://www.google.com/maps/search/?api=1&query={coord}"
+            formatted_coord = ','.join(map(str, coord))
+            maps_url = f"https://www.google.com/maps/search/?api=1&query={formatted_coord}"
             
             # Adiciona o link clicável para cada coordenada
             page.add(ft.TextButton(text=f"{name}: {coord}", url=maps_url))  # Usa TextButton para criar o link
