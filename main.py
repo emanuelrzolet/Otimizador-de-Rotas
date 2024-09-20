@@ -1,6 +1,5 @@
 import flet as ft
 from functions import locations, gerador
-import json
 
 
 def main(page: ft.Page):
@@ -49,9 +48,16 @@ def main(page: ft.Page):
     # Função para capturar os itens marcados e exibir como JSON
     def CaptureLocations(e):
         selected_coords = {name: coord for name, coord in locations.showLocations().items() if selected_items.get(name)}
+        
+        # Gere as coordenadas para cada local selecionado
         gerador.generate(selected_coords)
-        for c in gerador.generate(selected_coords):
-            page.add(ft.Text(c))  # Adiciona o resultado à página
+        
+        for name, coord in selected_coords.items():
+            
+            maps_url = f"https://www.google.com/maps/search/?api=1&query={coord}"
+            
+            # Adiciona o link clicável para cada coordenada
+            page.add(ft.TextButton(text=f"{name}: {coord}", url=maps_url))  # Usa TextButton para criar o link
         page.update()
 
     # Adicionar coordenada

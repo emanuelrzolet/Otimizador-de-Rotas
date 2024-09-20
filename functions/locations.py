@@ -6,7 +6,7 @@ def addLocation(name, coord, page, reload_locations):
         # Passagem dos dados para dentro do objeto
         dados[name] = coord
         
-        f.seek(0)  # Move o cursor para o início do arquivo
+        f.seek(0)  # Move o cursor para o início do arquivo2
         f.truncate()  # Limpa o conteúdo do arquivo
         
         # Escrevendo os dados atualizados
