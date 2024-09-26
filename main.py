@@ -1,5 +1,6 @@
 import flet as ft
-from functions import locations, gerador
+from src.utils import gerador
+from src.data import locations
 
 
 def main(page: ft.Page):
