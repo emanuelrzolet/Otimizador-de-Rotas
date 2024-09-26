@@ -1,10 +1,16 @@
 import flet as ft
 from src.utils import gerador
 from src.data import locations
+from src.layout import main_layout
 
 
 def main(page: ft.Page):
     page.scroll = ft.ScrollMode.ALWAYS  # Permite rolagem sempre
+    #Cria a parte visual principal do APP
+    # TESTAR
+    main_layout.CreateAppLayout(page)
+    
+    
     page.add(ft.SafeArea(ft.Text("_-Gerador de Rotas Aprimoradas-_")))
 
     selected_items = {}  # Armazena o estado dos checkboxes (True/False) com base no nome
