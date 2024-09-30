@@ -8,30 +8,35 @@ def main(page: ft.Page):
     page.scroll = ft.ScrollMode.ALWAYS  # Permite rolagem sempre
     #Cria a parte visual principal do APP
     # TESTAR
-    main_layout.CreateAppLayout(page)
+    main_layout.createAppLayout(page)
+    coord_list_container = ft.Column()  # Cria um contêiner para armazenar a lista de coordenadas
+
     
+
     
     page.add(ft.SafeArea(ft.Text("_-Gerador de Rotas Aprimoradas-_")))
+    page.add(coord_list_container)
 
     selected_items = {}  # Armazena o estado dos checkboxes (True/False) com base no nome
 
     # Função para recarregar a lista de coordenadas
+    
+    
+    
     def reload_locations():
-        # Limpa todos os controles da página e recria os campos
-        page.controls.clear()
-        page.add(ft.SafeArea(ft.Text("_-Gerador de Rotas Aprimoradas-_")))
-        page.add(nameField, coordField)
-        page.add(ft.ElevatedButton(text="Adicionar Coordenada", on_click=lambda e: locations.addLocation(nameField.value, coordField.value, page, reload_locations)))
-
+        # Limpa apenas o contêiner de coordenadas
+        coord_list_container.controls.clear()  # Remove todos os controles dentro do contêiner
+        
         # Mostrar coordenada
-        items = locations.showLocations()
+        items = locations.getLocations()
         for name, coord in items.items():
             selected_items[name] = True  # Inicializa todos os checkboxes como True
-            
+
             def checkbox_changed(e, loc_name=name):
                 selected_items[loc_name] = e.control.value  # Atualiza o estado quando o checkbox é alterado
 
-            page.add(
+            # Adiciona a coordenada ao contêiner, não à página
+            coord_list_container.controls.append(
                 ft.Row(
                     controls=[
                         ft.Checkbox(
@@ -46,11 +51,9 @@ def main(page: ft.Page):
                     ]
                 )
             )
-
-        # Botão para capturar os itens selecionados
-        page.add(ft.ElevatedButton(text="Capturar Selecionados", on_click=CaptureLocations))
-
-        page.update()
+        
+        # Atualiza o contêiner, não a página inteira
+        coord_list_container.update()
 
     # Função para capturar os itens marcados e exibir como JSON
     def CaptureLocations(e):
@@ -78,6 +81,5 @@ def main(page: ft.Page):
     # Carrega as coordenadas inicialmente
     reload_locations()
     
-    page.update()
 
 ft.app(main)

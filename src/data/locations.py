@@ -15,7 +15,7 @@ def addLocation(name, coord, page, reload_locations):
     # Atualiza a lista de coordenadas
     reload_locations()
 
-def showLocations():
+def getLocations():
     with open('locations.json', 'r') as f:
         dados = json.load(f)
         return dados
