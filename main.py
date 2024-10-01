@@ -3,26 +3,21 @@ from src.utils import gerador
 from src.data import locations
 from src.layout import main_layout
 
-
 def main(page: ft.Page):
     page.scroll = ft.ScrollMode.ALWAYS  # Permite rolagem sempre
-    #Cria a parte visual principal do APP
-    # TESTAR
+    page.title = "Gerador de Rotas"  # Define o título da página
+
+    # Cria a AppBar e o layout principal
     main_layout.createAppLayout(page)
-    coord_list_container = ft.Column()  # Cria um contêiner para armazenar a lista de coordenadas
 
-    
 
-    
-    page.add(ft.SafeArea(ft.Text("_-Gerador de Rotas Aprimoradas-_")))
+    # Cria um contêiner para armazenar a lista de coordenadas
+    coord_list_container = ft.Column()
     page.add(coord_list_container)
 
     selected_items = {}  # Armazena o estado dos checkboxes (True/False) com base no nome
 
     # Função para recarregar a lista de coordenadas
-    
-    
-    
     def reload_locations():
         # Limpa apenas o contêiner de coordenadas
         coord_list_container.controls.clear()  # Remove todos os controles dentro do contêiner
@@ -35,7 +30,7 @@ def main(page: ft.Page):
             def checkbox_changed(e, loc_name=name):
                 selected_items[loc_name] = e.control.value  # Atualiza o estado quando o checkbox é alterado
 
-            # Adiciona a coordenada ao contêiner, não à página
+            # Adiciona a coordenada ao contêiner
             coord_list_container.controls.append(
                 ft.Row(
                     controls=[
@@ -52,7 +47,7 @@ def main(page: ft.Page):
                 )
             )
         
-        # Atualiza o contêiner, não a página inteira
+        # Atualiza o contêiner
         coord_list_container.update()
 
     # Função para capturar os itens marcados e exibir como JSON
@@ -71,15 +66,16 @@ def main(page: ft.Page):
             page.add(ft.TextButton(text=f"{name}: {coord}", url=maps_url))  # Usa TextButton para criar o link
         page.update()
 
-    # Adicionar coordenada
+    # Campos de entrada para adicionar novas coordenadas
     nameField = ft.TextField(label="Nome", border="underline", hint_text="Digite o nome do ponto de parada: ")
     coordField = ft.TextField(label="Coordenada", border="none", hint_text="Latitude, Longitude: ")
 
+    # Botão para adicionar coordenada
     page.add(nameField, coordField)
     page.add(ft.ElevatedButton(text="Adicionar Coordenada", on_click=lambda e: locations.addLocation(nameField.value, coordField.value, page, reload_locations)))
 
     # Carrega as coordenadas inicialmente
     reload_locations()
-    
 
-ft.app(main)
+# Inicia a aplicação
+ft.app(target=main)
