@@ -9,6 +9,5 @@ def createAppLayout(page):
 
     # Cria o layout principal
     page.appbar = createAppBar()  # Adiciona a AppBar diretamente à página
-    page.coordList = createCoordList(page) # Adiciona o formulário para a Página
-    # page.listView = createListView(page)
+    page.coordList = createCoordList(page) # Adiciona o formulário, a lista de coordenadas e o botão para gerar a rota
     
