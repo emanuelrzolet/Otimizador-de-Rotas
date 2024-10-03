@@ -76,10 +76,12 @@ def createCoordList(page):
     def toggle_list(e):
         coord_list_container.visible = not coord_list_container.visible
         coord_list_container.update()
+    page.add(
+        ft.Row(controls= [
+        # Botão para mostrar/ocultar a lista de coordenadas
+        ft.ElevatedButton(text="Expandir/Minimizar Lista", on_click=toggle_list), 
+         # Botão para gerar rota e minimizar a lista
+        ft.ElevatedButton(text="Gerar Rota", on_click=captureLocations)]))
 
-    # Botão para mostrar/ocultar a lista de coordenadas
-    page.add(ft.ElevatedButton(text="Expandir/Minimizar Lista", on_click=toggle_list))
 
-    # Botão para gerar rota e minimizar a lista
-    page.add(ft.ElevatedButton(text="Gerar Rota", on_click=captureLocations))
 
