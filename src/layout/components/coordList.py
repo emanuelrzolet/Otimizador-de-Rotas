@@ -3,17 +3,38 @@ from src.data import locations
 from ...utils import gerador
 
 def createCoordList(page):
+    # Definir alinhamento centralizado da página
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
+
+    # Contêiner principal com alinhamento centralizado
+    layout_container = ft.Column(
+        alignment=ft.MainAxisAlignment.CENTER,  # Centraliza verticalmente os itens dentro da coluna
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,  # Centraliza horizontalmente os itens dentro da coluna
+    )
+
     # Campos de entrada para adicionar novas coordenadas
-    nameField = ft.TextField(label="Nome", border="underline", hint_text="Digite o nome do ponto de parada: ")
-    coordField = ft.TextField(label="Coordenada", border="none", hint_text="Latitude, Longitude: ")
+    nameField = ft.TextField(label="Nome", border="underline", hint_text="Digite o nome do ponto de parada: ",expand=4)
+    coordField = ft.TextField(label="Coordenada", border="none", hint_text="Latitude, Longitude: ", expand=4)
+
+    # Colocar os campos de entrada em um Row para centralização
+    input_fields = ft.Row(
+        controls=[nameField, coordField],
+        alignment=ft.MainAxisAlignment.CENTER  # Centraliza os campos horizontalmente
+    )
+
+    # Adicionar os campos de entrada ao layout centralizado
+    layout_container.controls.append(input_fields)
 
     # Botão para adicionar coordenada
-    page.add(nameField, coordField)
-    page.add(ft.ElevatedButton(text="Adicionar Coordenada", on_click=lambda e: locations.addLocation(nameField.value, coordField.value, page, reload_locations)))
-    
+    layout_container.controls.append(
+        ft.ElevatedButton(text="Adicionar Coordenada", on_click=lambda e: locations.addLocation(nameField.value, coordField.value, page, reload_locations))
+    )
+
     # Contêiner contendo a lista de coordenadas, visível por padrão
     coord_list_container = ft.Column(visible=True)
-    page.add(coord_list_container)
+    layout_container.controls.append(coord_list_container)
+    page.add(layout_container)
 
     selected_items = {}  # Armazena o estado dos checkboxes (True/False) com base no nome
 
@@ -43,7 +64,8 @@ def createCoordList(page):
                             icon=ft.icons.DELETE,
                             on_click=lambda e, loc_name=name: locations.deleteLocation(loc_name, page, reload_locations)
                         ),
-                    ]
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER  # Centraliza os itens dentro da linha
                 )
             )
         
@@ -76,12 +98,18 @@ def createCoordList(page):
     def toggle_list(e):
         coord_list_container.visible = not coord_list_container.visible
         coord_list_container.update()
-    page.add(
-        ft.Row(controls= [
-        # Botão para mostrar/ocultar a lista de coordenadas
-        ft.ElevatedButton(text="Expandir/Minimizar Lista", on_click=toggle_list), 
-         # Botão para gerar rota e minimizar a lista
-        ft.ElevatedButton(text="Gerar Rota", on_click=captureLocations)]))
 
+    # Contêiner horizontal para os botões
+    button_row = ft.Row(
+        controls=[
+            ft.ElevatedButton(text="Expandir/Minimizar Lista", on_click=toggle_list),
+            ft.ElevatedButton(text="Gerar Rota", on_click=captureLocations)
+        ],
+        alignment=ft.MainAxisAlignment.CENTER  # Alinha os botões no centro horizontalmente
+    )
 
+    # Adicionar a linha de botões ao layout centralizado
+    layout_container.controls.append(button_row)
+
+    page.update()
 

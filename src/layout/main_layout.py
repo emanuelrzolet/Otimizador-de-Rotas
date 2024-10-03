@@ -6,6 +6,7 @@ from .components.coordList import createCoordList
 
 def createAppLayout(page):
     page.title = "Gerador de rotas"
+    
 
     # Cria o layout principal
     page.appbar = createAppBar()  # Adiciona a AppBar diretamente à página
