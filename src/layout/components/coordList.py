@@ -11,8 +11,8 @@ def createCoordList(page):
     page.add(nameField, coordField)
     page.add(ft.ElevatedButton(text="Adicionar Coordenada", on_click=lambda e: locations.addLocation(nameField.value, coordField.value, page, reload_locations)))
     
-    # Contêiner contendo a lista de coordenadas e visibilidade controlada
-    coord_list_container = ft.Column(visible=False)
+    # Contêiner contendo a lista de coordenadas, visível por padrão
+    coord_list_container = ft.Column(visible=True)
     page.add(coord_list_container)
 
     selected_items = {}  # Armazena o estado dos checkboxes (True/False) com base no nome
@@ -66,6 +66,10 @@ def createCoordList(page):
             
             # Adiciona o link clicável para cada coordenada
             page.add(ft.TextButton(text=f"{name}: {coord}", url=maps_url))
+
+        # Minimiza a lista automaticamente após gerar a rota
+        coord_list_container.visible = False
+        coord_list_container.update()
         page.update()
         
     # Botão para expandir/minimizar a lista
@@ -76,6 +80,6 @@ def createCoordList(page):
     # Botão para mostrar/ocultar a lista de coordenadas
     page.add(ft.ElevatedButton(text="Expandir/Minimizar Lista", on_click=toggle_list))
 
-    # Botão para gerar rota
+    # Botão para gerar rota e minimizar a lista
     page.add(ft.ElevatedButton(text="Gerar Rota", on_click=captureLocations))
 
