@@ -3,9 +3,6 @@ from src.data import locations
 from ...utils import gerador
 
 def createCoordList(page):
-    # Definir alinhamento centralizado da página
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.vertical_alignment = ft.MainAxisAlignment.CENTER
 
     # Contêiner principal com alinhamento centralizado
     layout_container = ft.Column(
