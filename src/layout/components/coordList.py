@@ -11,8 +11,19 @@ def createCoordList(page):
     )
 
     # Campos de entrada para adicionar novas coordenadas
-    nameField = ft.TextField(label="Nome", border="underline", hint_text="Digite o nome do ponto de parada: ",expand=4)
-    coordField = ft.TextField(label="Coordenada", border="none", hint_text="Latitude, Longitude: ", expand=4)
+    nameField = ft.TextField(
+    label="Nome",
+    border="underline",
+    hint_text="Digite o nome do ponto de parada: ",
+    expand=4
+    )
+    coordField = ft.TextField(
+    label="Coordenada",
+    border="none",
+    hint_text="Latitude, Longitude: ",
+    expand=4
+    )
+
 
     # Colocar os campos de entrada em um Row para centralização
     input_fields = ft.Row(
