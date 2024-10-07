@@ -15,13 +15,15 @@ def createCoordList(page):
     label="Nome",
     border="underline",
     hint_text="Digite o nome do ponto de parada: ",
-    expand=4
+    expand=4,
+    text_align=ft.TextAlign.CENTER
     )
     coordField = ft.TextField(
     label="Coordenada",
     border="none",
     hint_text="Latitude, Longitude: ",
-    expand=4
+    expand=4,
+    text_align=ft.TextAlign.CENTER
     )
 
 
