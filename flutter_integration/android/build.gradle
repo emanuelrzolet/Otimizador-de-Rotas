@@ -1,18 +1,19 @@
-allprojects {
+buildscript {
     repositories {
         google()
-        mavenCentral()
+        mavenCentral()  // Certifique-se de que o Maven Central está aqui
+        maven { url "https://chaquo.com/maven" }  // Adicione este repositório
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:7.0.0"
+        classpath "com.chaquo.python:gradle:9.1.0"  // Adicione a dependência do Chaquopy com a versão correta
     }
 }
 
-rootProject.buildDir = "../build"
-subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
-    project.evaluationDependsOn(":app")
-}
-
-tasks.register("clean", Delete) {
-    delete rootProject.buildDir
+allprojects {
+    repositories {
+        google()
+        mavenCentral()  // Certifique-se de que o Maven Central está aqui
+        maven { url "https://chaquo.com/maven" }  // Adicione este repositório
+    }
 }

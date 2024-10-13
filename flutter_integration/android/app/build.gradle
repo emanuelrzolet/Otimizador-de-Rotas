@@ -1,8 +1,7 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    id "com.chaquo.python" 
-    // O plugin do Flutter deve ser aplicado após os plugins do Android e Kotlin.
+    id "com.chaquo.python"  // Adicione o plugin do Chaquopy
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -21,7 +20,6 @@ android {
     }
 
     defaultConfig {
-        // TODO: Especifique seu próprio ID de Aplicação único.
         applicationId = "com.example.flutter_integration"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
@@ -29,7 +27,7 @@ android {
         versionName = flutter.versionName
 
         ndk {
-            abiFilters "armeabi-v7a", "x86"
+            abiFilters "armeabi-v7a", "x86"  // Configuração para diferentes arquiteturas
         }
     }
 
@@ -40,7 +38,6 @@ android {
     }
 }
 
-// Adicionado a seção de dependências do Chaquopy
 dependencies {
-    implementation 'com.chaquo.python:android:9.1.0'
+    implementation 'com.chaquo.python:android:9.1.0'  // Dependência do Chaquopy
 }
