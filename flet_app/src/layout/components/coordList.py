@@ -3,7 +3,6 @@ from src.data import locations
 from ...utils import gerador
 
 def createCoordList(page):
-
     # Contêiner principal com alinhamento centralizado
     layout_container = ft.Column(
         alignment=ft.MainAxisAlignment.CENTER,  # Centraliza verticalmente os itens dentro da coluna
@@ -12,19 +11,17 @@ def createCoordList(page):
 
     # Campos de entrada para adicionar novas coordenadas
     nameField = ft.TextField(
-    label="Nome",
-    border="underline",
-    hint_text="Digite o nome do ponto de parada: ",
-    expand=4,
-    
+        label="Nome",
+        border="underline",
+        hint_text="Digite o nome do ponto de parada: ",
+        expand=4,
     )
     coordField = ft.TextField(
-    label="Coordenada",
-    border="none",
-    hint_text="Latitude, Longitude: ",
-    expand=4
+        label="Coordenada",
+        border="none",
+        hint_text="Latitude, Longitude: ",
+        expand=4,
     )
-
 
     # Colocar os campos de entrada em um Row para centralização
     input_fields = ft.Row(
@@ -37,7 +34,10 @@ def createCoordList(page):
 
     # Botão para adicionar coordenada
     layout_container.controls.append(
-        ft.ElevatedButton(text="Adicionar Coordenada", on_click=lambda e: locations.addLocation(nameField.value, coordField.value, page, reload_locations))
+        ft.ElevatedButton(
+            text="Adicionar Coordenada",
+            on_click=lambda e: locations.addLocation(nameField.value, coordField.value, page, reload_locations)
+        )
     )
 
     # Contêiner contendo a lista de coordenadas, visível por padrão
@@ -86,6 +86,9 @@ def createCoordList(page):
     
     # Função para capturar os itens marcados e exibir como JSON
     def captureLocations(e):
+        # Limpa os controles do contêiner antes de adicionar os novos links
+        coord_list_container.controls.clear()
+
         selected_coords = {name: coord for name, coord in locations.getLocations().items() if selected_items.get(name)}
         
         # Gere as coordenadas para cada local selecionado
@@ -95,8 +98,10 @@ def createCoordList(page):
             formatted_coord = ','.join(map(str, coord))
             maps_url = f"https://www.google.com/maps/search/?api=1&query={formatted_coord}"
             
-            # Adiciona o link clicável para cada coordenada
-            page.add(ft.TextButton(text=f"{name}: {coord}", url=maps_url))
+            # Adiciona o link clicável para cada coordenada ao contêiner
+            coord_list_container.controls.append(
+                ft.TextButton(text=f"{name}: {coord}", url=maps_url)
+            )
 
         # Minimiza a lista automaticamente após gerar a rota
         coord_list_container.visible = False
@@ -121,4 +126,3 @@ def createCoordList(page):
     layout_container.controls.append(button_row)
 
     page.update()
-
