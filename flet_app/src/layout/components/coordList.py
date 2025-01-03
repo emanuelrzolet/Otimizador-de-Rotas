@@ -104,7 +104,7 @@ def createCoordList(page):
             )
 
         # Minimiza a lista automaticamente após gerar a rota
-        coord_list_container.visible = False
+        coord_list_container.visible = True
         coord_list_container.update()
         page.update()
         
